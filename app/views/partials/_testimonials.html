@@ -1,0 +1,30 @@
+{#
+  Testimonios en movimiento continuo de derecha a izquierda.
+  La lista se repite 3 veces para que el bucle no tenga huecos en pantallas
+  anchas; las copias van con aria-hidden para que los lectores de pantalla
+  solo lean la primera. Se pausa al pasar el ratón.
+#}
+<section class="family" id="meet-the-family">
+  <h2 class="section-title">{{ content.testimonials_title }}</h2>
+
+  <div class="marquee" style="--marquee-duration: {{ content.testimonials | length * 10 }}s">
+    <ul class="marquee__track">
+      {% for copy in range(3) %}
+        {% for t in content.testimonials %}
+          <li class="testimonial"{% if copy %} aria-hidden="true"{% endif %}>
+            <div class="testimonial__head">
+              <img class="testimonial__avatar" src="{{ t.avatar }}" alt="{{ t.name if not copy }}" loading="lazy">
+              <div class="testimonial__who">
+                <span>{{ t.name }} <small>{{ t.flag }}</small></span>
+                <span>{{ t.role }}</span>
+              </div>
+            </div>
+            <p class="testimonial__quote">{{ t.quote }}</p>
+          </li>
+        {% endfor %}
+      {% endfor %}
+    </ul>
+  </div>
+
+  {% with link = content.intro.cta %}{% include "partials/_cta.html" %}{% endwith %}
+</section>

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="{{ content.lang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ content.brand }}{% endblock %}</title>
+  <meta name="description" content="{{ content.meta_description }}">
+  {% for language in content.languages %}
+    <link rel="alternate" hreflang="{{ language.code }}" href="{{ url_for('main.index', lang=language.code, _external=True) }}">
+  {% endfor %}
+
+  {# Aplica el tema guardado (o el del sistema) antes de pintar, para evitar parpadeos #}
+  <script>
+    (function () {
+      var theme;
+      try { theme = localStorage.getItem("theme"); } catch (e) {}
+      if (theme !== "light" && theme !== "dark") {
+        theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://images.unsplash.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,600;0,700;1,300&family=Fraunces:opsz,wght@9..144,500&family=Inter:wght@400&family=Patrick+Hand&family=Questrial&display=swap">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+  {% include "partials/_controls.html" %}
+  {% block body %}{% endblock %}
+
+  <script src="{{ url_for('static', filename='js/cylinder-ring.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+</body>
+</html>

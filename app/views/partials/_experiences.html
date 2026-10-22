@@ -1,0 +1,15 @@
+{#
+  Anillo 3D de polaroids con las experiencias vividas.
+  Sin JavaScript se ve como una tira horizontal de fotos; cylinder-ring.js
+  la convierte en un cilindro 3D que gira (reacciona al ratón y se puede arrastrar).
+#}
+<section class="experiences" aria-label="Experiences">
+  <div class="ring" data-cylinder-ring data-duration="28" data-tilt="-12">
+    {% for exp in content.experiences %}
+      <figure class="polaroid">
+        <img src="{{ exp.src }}" alt="{{ exp.alt }}" loading="lazy" draggable="false">
+        {% if exp.caption %}<figcaption>{{ exp.caption }}</figcaption>{% endif %}
+      </figure>
+    {% endfor %}
+  </div>
+</section>

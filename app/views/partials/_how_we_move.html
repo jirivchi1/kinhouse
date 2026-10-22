@@ -1,0 +1,26 @@
+{% set hwm = content.how_we_move %}
+<section class="how container" id="how-we-move">
+  <h2 class="section-title section-title--xl">{{ hwm.title }}</h2>
+  <p class="how__subtitle">
+    {{ hwm.subtitle }}<br>
+    {{ hwm.link_prefix }} <a href="{{ hwm.link.url }}" target="_blank" rel="noopener">{{ hwm.link.label }}</a>
+  </p>
+
+  <div class="tabs" role="tablist" aria-label="{{ hwm.title }}">
+    {% for item in hwm.offerings %}
+      <button class="tab{% if loop.first %} is-active{% endif %}" role="tab"
+              id="tab-{{ item.slug }}" aria-controls="panel-{{ item.slug }}"
+              aria-selected="{{ 'true' if loop.first else 'false' }}"
+              data-tab="{{ item.slug }}">{{ item.name }}</button>
+    {% endfor %}
+  </div>
+
+  {% for item in hwm.offerings %}
+    <div class="panel{% if loop.first %} is-active{% endif %}" role="tabpanel"
+         id="panel-{{ item.slug }}" aria-labelledby="tab-{{ item.slug }}"
+         {% if not loop.first %}hidden{% endif %}>
+      <img class="panel__image" src="{{ item.image }}" alt="{{ item.name }}" loading="lazy">
+      <p class="panel__text">{{ item.description }}</p>
+    </div>
+  {% endfor %}
+</section>

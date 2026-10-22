@@ -1,0 +1,16 @@
+{% set intro = content.intro %}
+<section class="intro container">
+  <h2 class="intro__title">{{ intro.title }}</h2>
+
+  {% for block in intro.paragraphs %}
+    <p class="intro__text">
+      {% for line in block %}{{ line }}{% if not loop.last %} <br>{% endif %}{% endfor %}
+    </p>
+  {% endfor %}
+
+  <blockquote class="intro__quote">
+    {% for line in intro.quote %}{{ line }}{% if not loop.last %} <br>{% endif %}{% endfor %}
+  </blockquote>
+
+  {% with link = intro.cta %}{% include "partials/_cta.html" %}{% endwith %}
+</section>

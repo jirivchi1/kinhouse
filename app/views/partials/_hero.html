@@ -1,0 +1,17 @@
+{% set hero = content.hero %}
+<header class="hero">
+  {% if hero.video %}
+    <video class="hero__media" src="{{ hero.video }}" poster="{{ hero.image }}" autoplay muted loop playsinline></video>
+  {% else %}
+    <img class="hero__media hero__media--zoom" src="{{ hero.image }}" alt="">
+  {% endif %}
+  <div class="hero__overlay"></div>
+
+  <a class="hero__logo" href="{{ url_for('main.index', lang=content.lang) }}">{{ content.brand }}</a>
+
+  <h1 class="hero__headline">
+    {% for line in hero.headline %}<span>{{ line }}</span>{% endfor %}
+  </h1>
+
+  <p class="hero__hint">{{ hero.scroll_hint }}</p>
+</header>
