@@ -91,10 +91,10 @@ TEXTS = {
     "en": {
         "language_name": "English",
         "meta_description": "A private community for early-stage lifestyle founders.",
-        "hero_headline": ["Where the ambitious evolve", "and build freedom together."],
+        "hero_headline": ["Unplug from the routine,", "reconnect with what matters."],
         "scroll_hint": "↓ scroll to learn more",
-        "intro_title": "Have an idea or a business you want to take digital? "
-                       "Here's a community that helps you get there.",
+        "intro_title": "Clear your head for a weekend, break the routine or move your idea forward: "
+                       "a country house and people who help you do it.",
         "intro_paragraphs": [
             [
                 "We believe growth doesn't happen in isolation.",
@@ -201,10 +201,10 @@ TEXTS = {
     "es": {
         "language_name": "Español",
         "meta_description": "Una comunidad privada para fundadores en fase inicial.",
-        "hero_headline": ["Donde los ambiciosos evolucionan", "y construyen libertad juntos."],
+        "hero_headline": ["Desconecta de la rutina", "y conecta con lo que importa."],
         "scroll_hint": "↓ desliza para saber más",
-        "intro_title": "¿Tienes una idea o un negocio y quieres digitalizarlo? "
-                       "Aquí tienes una comunidad que te ayuda.",
+        "intro_title": "Despejarte un finde, romper con la rutina o impulsar tu idea: "
+                       "aquí tienes una casa de campo y gente que te ayuda.",
         "intro_paragraphs": [
             [
                 "Creemos que el crecimiento no ocurre en aislamiento.",
