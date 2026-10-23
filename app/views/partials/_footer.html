@@ -1,9 +1,9 @@
 {% set f = content.footer %}
 <footer class="footer container">
   <form class="newsletter" action="{{ url_for('main.subscribe') }}" method="post" data-newsletter
-        data-error="{{ content.ui.network_error }}">
+        data-error="{{ layout.ui.network_error }}">
     <h3 class="newsletter__title">{{ f.newsletter_title }}</h3>
-    <input type="hidden" name="lang" value="{{ content.lang }}">
+    <input type="hidden" name="lang" value="{{ layout.lang }}">
     <input class="newsletter__input" type="email" name="email" required
            placeholder="{{ f.newsletter_placeholder }}" aria-label="Email">
     <button class="newsletter__button" type="submit">

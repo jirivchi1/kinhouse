@@ -25,18 +25,21 @@
     });
   }
 
-  /* ---------- Pestañas "How we move" ---------- */
+  /* ---------- Pestañas ("Cómo trabajamos" y semanas de eventos) ---------- */
   function initTabs() {
-    const tabs = document.querySelectorAll("[data-tab]");
-    tabs.forEach((tab) => {
-      tab.addEventListener("click", () => {
-        tabs.forEach((t) => {
-          const active = t === tab;
-          t.classList.toggle("is-active", active);
-          t.setAttribute("aria-selected", String(active));
-          const panel = document.getElementById(t.getAttribute("aria-controls"));
-          panel.hidden = !active;
-          panel.classList.toggle("is-active", active);
+    // Cada grupo de pestañas (role="tablist") funciona por separado
+    document.querySelectorAll('[role="tablist"]').forEach((list) => {
+      const tabs = list.querySelectorAll("[data-tab]");
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          tabs.forEach((t) => {
+            const active = t === tab;
+            t.classList.toggle("is-active", active);
+            t.setAttribute("aria-selected", String(active));
+            const panel = document.getElementById(t.getAttribute("aria-controls"));
+            panel.hidden = !active;
+            panel.classList.toggle("is-active", active);
+          });
         });
       });
     });

@@ -12,5 +12,5 @@
     {% for line in intro.quote %}{{ line }}{% if not loop.last %} <br>{% endif %}{% endfor %}
   </blockquote>
 
-  {% with link = intro.cta %}{% include "partials/_cta.html" %}{% endwith %}
+  {% include "partials/_cta.html" %}
 </section>

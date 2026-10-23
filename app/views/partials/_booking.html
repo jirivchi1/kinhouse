@@ -1,0 +1,12 @@
+{#
+  Calendario del mes con los eventos de cada día.
+  Se eligen llegada y salida y el botón "Únete a la familia" abre el formulario (_join_dialog.html).
+  calendar.js lo dibuja con los datos de data-config (los prepara main_controller.booking_calendar).
+#}
+<section class="booking container" id="calendar">
+  <h2 class="section-title">{{ content.booking.title }}</h2>
+  <p class="booking__subtitle">{{ content.booking.subtitle }}</p>
+
+  <div class="mcal" data-month-calendar data-dialog="#join-dialog"
+       data-join-label="{{ layout.join_label }}" data-config='{{ calendar | tojson }}'></div>
+</section>

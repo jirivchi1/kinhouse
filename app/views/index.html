@@ -5,9 +5,15 @@
   <main>
     {% include "partials/_intro.html" %}
     {% include "partials/_experiences.html" %}
+    {% include "partials/_booking.html" %}
     {% include "partials/_how_we_move.html" %}
     {% include "partials/_testimonials.html" %}
     {% include "partials/_faq.html" %}
   </main>
   {% include "partials/_footer.html" %}
+  {% include "partials/_join_dialog.html" %}
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/calendar.js') }}" defer></script>
 {% endblock %}

@@ -1,0 +1,52 @@
+{#
+  Formulario de "Únete a la familia". Aparece encima de la página al pulsar el botón
+  del calendario, con las fechas ya elegidas. Si el servidor encuentra errores, la
+  página vuelve con data-open y el formulario se abre solo, con lo que ya estaba escrito.
+#}
+{% set labels = calendar.labels %}
+<dialog class="join-dialog" id="join-dialog" aria-labelledby="join-dialog-title"{% if open_form %} data-open{% endif %}>
+  <form class="join-form" method="post" action="{{ url_for('join.submit', lang=layout.lang) }}">
+    <div class="join-dialog__head">
+      <h2 class="join-dialog__title" id="join-dialog-title">{{ form.texts.title }}</h2>
+      <button type="button" class="join-dialog__close" data-dialog-close aria-label="{{ labels.close }}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <p class="join-dialog__intro">{{ form.texts.intro }}</p>
+
+    <div class="join-dialog__dates">
+      <div>
+        <span class="join-dialog__dates-label">{{ labels.your_dates }}</span>
+        <strong data-dialog-dates></strong>
+      </div>
+      <button type="button" class="join-dialog__change" data-dialog-change>{{ labels.change_dates }}</button>
+    </div>
+
+    {% if form.has_errors %}
+      <p class="join__alert" role="alert">{{ form.dates_error or form.texts.error_summary }}</p>
+    {% endif %}
+
+    {# Campo trampa anti-spam: oculto para las personas #}
+    <div class="hp" aria-hidden="true">
+      <label>Website <input type="text" name="{{ form.honeypot }}" tabindex="-1" autocomplete="off"></label>
+    </div>
+
+    {# Las rellena el calendario #}
+    <input type="hidden" name="check_in" value="{{ form.check_in }}" data-check-in>
+    <input type="hidden" name="check_out" value="{{ form.check_out }}" data-check-out>
+
+    {% for section in form.sections %}
+      <section class="join-form__section">
+        <h3 class="join-form__title">{{ section.title }}</h3>
+        {% for field in section.fields %}
+          {% include "partials/_form_field.html" %}
+        {% endfor %}
+      </section>
+    {% endfor %}
+
+    <p class="join-form__note">{{ form.texts.required_note }}</p>
+    <div class="join-form__actions">
+      <button class="cta" type="submit">{{ form.texts.submit }}</button>
+    </div>
+  </form>
+</dialog>

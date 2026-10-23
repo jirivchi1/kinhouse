@@ -9,15 +9,19 @@ solo tienes que editar este archivo (o sustituirlo por una base de datos).
   orden que las fotos/personas a las que acompañan.
 """
 from dataclasses import dataclass
+from pathlib import Path
+
+from app.models.availability import GROUP_SIZE
 
 SUPPORTED_LANGUAGES = ("en", "es")
 DEFAULT_LANGUAGE = "en"
 
 BRAND = "Kinhaus"
 EMAIL = "hi@kinhaus.co"
-APPLY_URL = "#"  # TODO: enlace al formulario de solicitud
-FOUNDER_HOUSES_URL = "#"  # TODO: página con las próximas founder houses
 SOCIAL_URLS = ["https://www.instagram.com/", "https://www.youtube.com/"]
+
+IMG_DIR = Path(__file__).resolve().parent.parent / "static" / "img"
+IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".avif"}
 
 
 def unsplash(photo_id: str, width: int = 800, height: int | None = None) -> str:
@@ -28,10 +32,25 @@ def unsplash(photo_id: str, width: int = 800, height: int | None = None) -> str:
     return url
 
 
+def local_image(folder: str, name: str, fallback: str) -> str:
+    """Foto propia de app/static/img/<folder>/<name>.<jpg|jpeg|png|webp|avif>.
+
+    Si no existe, devuelve `fallback` (la foto de Unsplash). No importa la
+    extensión ni las mayúsculas. El ?v= hace que el navegador recargue la
+    foto cuando la sustituyes por otra con el mismo nombre.
+    """
+    directory = IMG_DIR / folder
+    if directory.is_dir():
+        for file in directory.iterdir():
+            if file.stem.lower() == name.lower() and file.suffix.lower() in IMAGE_EXTENSIONS:
+                return f"/static/img/{folder}/{file.name}?v={int(file.stat().st_mtime)}"
+    return fallback
+
+
 # ---------------------------------------------------------------------------
 # Datos que no cambian con el idioma
 # ---------------------------------------------------------------------------
-HERO_IMAGE = unsplash("1600596542815-ffad4c1539a9", 2000)
+HERO_PHOTO = ("portada", "portada", "1600596542815-ffad4c1539a9")  # (carpeta, nombre, reserva)
 HERO_VIDEO = None  # p. ej. "/static/video/hero.mp4"
 
 EXPERIENCE_PHOTOS = [
@@ -47,12 +66,13 @@ EXPERIENCE_PHOTOS = [
     "1522202176988-66273c2fd55f",
 ]
 
-OFFERINGS = [  # (slug, foto)
-    ("founder-houses", "1613490493576-7fde63acd811"),
-    ("weekly-calls", "1588196749597-9ff075ee6b5b"),
-    ("online-platform", "1531545514256-b1400bc00f31"),
-    ("workshops", "1552664730-d307ca884978"),
-    ("mentorship", "1544027993-37dbfe43562a"),
+# Pestañas de "Cómo trabajamos": (slug, foto propia en img/como-nos-movemos/, foto de reserva)
+OFFERINGS = [
+    ("founder-houses", "casas_fundadores", "1613490493576-7fde63acd811"),
+    ("weekly-calls", "llamadas_semanales", "1588196749597-9ff075ee6b5b"),
+    ("online-platform", "plataforma_online", "1531545514256-b1400bc00f31"),
+    ("workshops", "talleres", "1552664730-d307ca884978"),
+    ("mentorship", "mentoria", "1544027993-37dbfe43562a"),
 ]
 
 PEOPLE = [  # (nombre, país, avatar)
@@ -73,7 +93,8 @@ TEXTS = {
         "meta_description": "A private community for early-stage lifestyle founders.",
         "hero_headline": ["Where the ambitious evolve", "and build freedom together."],
         "scroll_hint": "↓ scroll to learn more",
-        "intro_title": "A worldwide community for early-stage founders pursuing their full potential.",
+        "intro_title": "Have an idea or a business you want to take digital? "
+                       "Here's a community that helps you get there.",
         "intro_paragraphs": [
             [
                 "We believe growth doesn't happen in isolation.",
@@ -101,11 +122,7 @@ TEXTS = {
             ("Night campfire", "Late nights"),
             ("Group working on laptops", "Co-working"),
         ],
-        "how_title": "How we move",
-        "how_subtitle": "A 1-year membership only, because real growth and meaningful connections "
-                        "don't happen overnight.",
-        "how_link_prefix": "Check out our upcoming",
-        "how_link": "founder houses",
+        "how_title": "How we work",
         "offerings": [  # (nombre, descripción)
             ("Founder Houses",
              "Thoughtfully facilitated retreats. Curated for play, connection and breakthroughs."),
@@ -121,6 +138,9 @@ TEXTS = {
             ("Mentorship",
              "Book 1on1 calls with people that have been through the journey."),
         ],
+        "booking_title": "Pick your dates",
+        "booking_subtitle": "Groups of {capacity} people. See what's happening each day, how many spots are "
+                            "left and select your check-in and check-out.",
         "testimonials_title": "Meet the Family",
         "testimonials": [  # (cargo, testimonio)
             ("Founder of StudioLaar",
@@ -183,7 +203,8 @@ TEXTS = {
         "meta_description": "Una comunidad privada para fundadores en fase inicial.",
         "hero_headline": ["Donde los ambiciosos evolucionan", "y construyen libertad juntos."],
         "scroll_hint": "↓ desliza para saber más",
-        "intro_title": "Una comunidad global para fundadores en fase inicial que persiguen todo su potencial.",
+        "intro_title": "¿Tienes una idea o un negocio y quieres digitalizarlo? "
+                       "Aquí tienes una comunidad que te ayuda.",
         "intro_paragraphs": [
             [
                 "Creemos que el crecimiento no ocurre en aislamiento.",
@@ -211,11 +232,7 @@ TEXTS = {
             ("Hoguera de noche", "Noches largas"),
             ("Grupo trabajando con portátiles", "Coworking"),
         ],
-        "how_title": "Cómo nos movemos",
-        "how_subtitle": "Membresía solo de 1 año, porque el crecimiento real y las conexiones de verdad "
-                        "no ocurren de la noche a la mañana.",
-        "how_link_prefix": "Echa un vistazo a nuestras próximas",
-        "how_link": "casas de fundadores",
+        "how_title": "Cómo trabajamos",
         "offerings": [
             ("Casas de fundadores",
              "Retiros facilitados con cuidado. Pensados para jugar, conectar y lograr grandes avances."),
@@ -231,6 +248,9 @@ TEXTS = {
             ("Mentoría",
              "Reserva llamadas 1 a 1 con personas que ya han recorrido el camino."),
         ],
+        "booking_title": "Elige tus fechas",
+        "booking_subtitle": "Grupos de {capacity} personas. Mira qué eventos hay cada día, cuántas plazas "
+                            "quedan y marca tu llegada y tu salida.",
         "testimonials_title": "Conoce a la familia",
         "testimonials": [
             ("Fundadora de StudioLaar",
@@ -320,7 +340,6 @@ class Intro:
     title: str
     paragraphs: list[list[str]]
     quote: list[str]
-    cta: Link
 
 
 @dataclass
@@ -333,7 +352,7 @@ class Experience:
 
 @dataclass
 class Offering:
-    """Pestaña de la sección 'How we move'."""
+    """Pestaña de la sección 'Cómo trabajamos'."""
     slug: str
     name: str
     description: str
@@ -343,10 +362,14 @@ class Offering:
 @dataclass
 class HowWeMove:
     title: str
-    subtitle: str
-    link_prefix: str
-    link: Link
     offerings: list[Offering]
+
+
+@dataclass
+class Booking:
+    """Textos del calendario de fechas del inicio."""
+    title: str
+    subtitle: str
 
 
 @dataclass
@@ -374,21 +397,28 @@ class Footer:
 
 
 @dataclass
-class HomeContent:
+class Layout:
+    """Lo común a todas las páginas: idioma, marca, controles y botón de unirse."""
     lang: str
     languages: list[Language]
     brand: str
     meta_description: str
+    join_label: str
+    ui: dict[str, str]
+
+
+@dataclass
+class HomeContent:
     hero: Hero
     intro: Intro
     experiences: list[Experience]
     how_we_move: HowWeMove
+    booking: Booking
     testimonials_title: str
     testimonials: list[Testimonial]
     faq_title: str
     faq: list[FaqItem]
     footer: Footer
-    ui: dict[str, str]
 
 
 def get_ui_text(lang: str, key: str) -> str:
@@ -396,31 +426,44 @@ def get_ui_text(lang: str, key: str) -> str:
     return TEXTS.get(lang, TEXTS[DEFAULT_LANGUAGE])["ui"][key]
 
 
-def get_home_content(lang: str = DEFAULT_LANGUAGE) -> HomeContent:
+def get_layout(lang: str = DEFAULT_LANGUAGE) -> Layout:
     t = TEXTS[lang]
-    join = Link(t["join"], APPLY_URL)
-
-    return HomeContent(
+    return Layout(
         lang=lang,
         languages=[Language(code, TEXTS[code]["language_name"], code == lang) for code in SUPPORTED_LANGUAGES],
         brand=BRAND,
         meta_description=t["meta_description"],
-        hero=Hero(t["hero_headline"], HERO_IMAGE, HERO_VIDEO, t["scroll_hint"]),
-        intro=Intro(t["intro_title"], t["intro_paragraphs"], t["quote"], join),
+        join_label=t["join"],
+        ui=t["ui"],
+    )
+
+
+def get_home_content(lang: str = DEFAULT_LANGUAGE) -> HomeContent:
+    t = TEXTS[lang]
+    hero_folder, hero_name, hero_fallback = HERO_PHOTO
+
+    return HomeContent(
+        hero=Hero(
+            t["hero_headline"],
+            local_image(hero_folder, hero_name, unsplash(hero_fallback, 2000)),
+            HERO_VIDEO,
+            t["scroll_hint"],
+        ),
+        intro=Intro(t["intro_title"], t["intro_paragraphs"], t["quote"]),
         experiences=[
             Experience(unsplash(photo, 500, 500), alt, caption)
             for photo, (alt, caption) in zip(EXPERIENCE_PHOTOS, t["experiences"], strict=True)
         ],
         how_we_move=HowWeMove(
             title=t["how_title"],
-            subtitle=t["how_subtitle"],
-            link_prefix=t["how_link_prefix"],
-            link=Link(t["how_link"], FOUNDER_HOUSES_URL),
             offerings=[
-                Offering(slug, name, description, unsplash(photo, 1000, 800))
-                for (slug, photo), (name, description) in zip(OFFERINGS, t["offerings"], strict=True)
+                Offering(slug, name, description,
+                         local_image("como-nos-movemos", local_name, unsplash(fallback, 1000, 800)))
+                for (slug, local_name, fallback), (name, description)
+                in zip(OFFERINGS, t["offerings"], strict=True)
             ],
         ),
+        booking=Booking(t["booking_title"], t["booking_subtitle"].format(capacity=GROUP_SIZE)),
         testimonials_title=t["testimonials_title"],
         testimonials=[
             Testimonial(name, flag, role, quote, unsplash(avatar, 160, 160))
@@ -435,5 +478,4 @@ def get_home_content(lang: str = DEFAULT_LANGUAGE) -> HomeContent:
             social=[Link(label, url) for label, url in zip(t["social"], SOCIAL_URLS, strict=True)],
             email=EMAIL,
         ),
-        ui=t["ui"],
     )

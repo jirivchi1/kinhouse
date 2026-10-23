@@ -7,7 +7,7 @@
   {% endif %}
   <div class="hero__overlay"></div>
 
-  <a class="hero__logo" href="{{ url_for('main.index', lang=content.lang) }}">{{ content.brand }}</a>
+  <a class="hero__logo" href="{{ url_for('main.index', lang=layout.lang) }}">{{ layout.brand }}</a>
 
   <h1 class="hero__headline">
     {% for line in hero.headline %}<span>{{ line }}</span>{% endfor %}

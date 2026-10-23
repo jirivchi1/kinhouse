@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="{{ content.lang }}">
+<html lang="{{ layout.lang }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}{{ content.brand }}{% endblock %}</title>
-  <meta name="description" content="{{ content.meta_description }}">
-  {% for language in content.languages %}
-    <link rel="alternate" hreflang="{{ language.code }}" href="{{ url_for('main.index', lang=language.code, _external=True) }}">
+  <title>{% block title %}{{ layout.brand }}{% endblock %}</title>
+  <meta name="description" content="{{ layout.meta_description }}">
+  {% for language in layout.languages %}
+    <link rel="alternate" hreflang="{{ language.code }}" href="{{ url_for(request.endpoint, lang=language.code, _external=True) }}">
   {% endfor %}
 
   {# Aplica el tema guardado (o el del sistema) antes de pintar, para evitar parpadeos #}
@@ -33,5 +33,6 @@
 
   <script src="{{ url_for('static', filename='js/cylinder-ring.js') }}" defer></script>
   <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+  {% block scripts %}{% endblock %}
 </body>
 </html>

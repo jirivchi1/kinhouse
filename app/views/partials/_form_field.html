@@ -1,0 +1,62 @@
+{# Pinta un campo del formulario según su tipo. Recibe `field` (FormField del modelo). #}
+{% set id = "f-" ~ field.name %}
+{% set describedby = (id ~ "-help " if field.help else "") ~ (id ~ "-error" if field.error else "") %}
+
+<div class="field field--{{ field.kind }}{% if field.error %} has-error{% endif %}">
+  {% if field.kind in ("radio", "checkboxes") %}
+    <fieldset{% if describedby %} aria-describedby="{{ describedby | trim }}"{% endif %}>
+      <legend class="field__label">{{ field.label }}{% if field.required %} <span class="req">*</span>{% endif %}</legend>
+      {% if field.help %}<p class="field__help" id="{{ id }}-help">{{ field.help }}</p>{% endif %}
+      <div class="choices">
+        {% for value, text in field.options %}
+          <label class="choice">
+            {% if field.kind == "radio" %}
+              <input type="radio" name="{{ field.name }}" value="{{ value }}"
+                     {% if field.value == value %}checked{% endif %} {% if field.required %}required{% endif %}>
+            {% else %}
+              <input type="checkbox" name="{{ field.name }}" value="{{ value }}"
+                     {% if value in field.value %}checked{% endif %}>
+            {% endif %}
+            <span>{{ text }}</span>
+          </label>
+        {% endfor %}
+      </div>
+    </fieldset>
+
+  {% elif field.kind == "checkbox" %}
+    <label class="consent" for="{{ id }}">
+      <input type="checkbox" id="{{ id }}" name="{{ field.name }}" value="yes"
+             {% if field.value %}checked{% endif %} {% if field.required %}required{% endif %}
+             {% if describedby %}aria-describedby="{{ describedby | trim }}"{% endif %}>
+      <span>{{ field.label }}{% if field.required %} <span class="req">*</span>{% endif %}</span>
+    </label>
+
+  {% else %}
+    <label class="field__label" for="{{ id }}">{{ field.label }}{% if field.required %} <span class="req">*</span>{% endif %}</label>
+    {% if field.help %}<p class="field__help" id="{{ id }}-help">{{ field.help }}</p>{% endif %}
+
+    {% if field.kind == "textarea" %}
+      <textarea class="field__input" id="{{ id }}" name="{{ field.name }}" rows="4"
+                maxlength="{{ field.max_length }}" placeholder="{{ field.placeholder }}"
+                {% if field.required %}required{% endif %}
+                {% if describedby %}aria-describedby="{{ describedby | trim }}"{% endif %}>{{ field.value }}</textarea>
+    {% elif field.kind == "select" %}
+      <select class="field__input" id="{{ id }}" name="{{ field.name }}"
+              {% if field.required %}required{% endif %}
+              {% if describedby %}aria-describedby="{{ describedby | trim }}"{% endif %}>
+        <option value="">{{ form.texts.select_placeholder }}</option>
+        {% for value, text in field.options %}
+          <option value="{{ value }}" {% if field.value == value %}selected{% endif %}>{{ text }}</option>
+        {% endfor %}
+      </select>
+    {% else %}
+      <input class="field__input" id="{{ id }}" name="{{ field.name }}" type="{{ field.kind }}"
+             value="{{ field.value }}" maxlength="{{ field.max_length }}" placeholder="{{ field.placeholder }}"
+             {% if field.kind == "email" %}autocomplete="email"{% elif field.name == "name" %}autocomplete="name"{% elif field.kind == "tel" %}autocomplete="tel"{% endif %}
+             {% if field.required %}required{% endif %}
+             {% if describedby %}aria-describedby="{{ describedby | trim }}"{% endif %}>
+    {% endif %}
+  {% endif %}
+
+  {% if field.error %}<p class="field__error" id="{{ id }}-error">{{ field.error }}</p>{% endif %}
+</div>

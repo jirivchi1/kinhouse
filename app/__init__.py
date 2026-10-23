@@ -13,7 +13,9 @@ def create_app(config_class=Config):
     app = Flask(__name__, template_folder="views", static_folder="static")
     app.config.from_object(config_class)
 
+    from app.controllers.join_controller import join_bp
     from app.controllers.main_controller import main_bp
 
     app.register_blueprint(main_bp)
+    app.register_blueprint(join_bp)
     return app
