@@ -22,6 +22,7 @@ SOCIAL_URLS = ["https://www.instagram.com/", "https://www.youtube.com/"]
 
 IMG_DIR = Path(__file__).resolve().parent.parent / "static" / "img"
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".avif"}
+VIDEO_EXTENSIONS = {".mp4", ".webm"}
 
 
 def unsplash(photo_id: str, width: int = 800, height: int | None = None) -> str:
@@ -32,7 +33,7 @@ def unsplash(photo_id: str, width: int = 800, height: int | None = None) -> str:
     return url
 
 
-def local_image(folder: str, name: str, fallback: str) -> str:
+def local_image(folder: str, name: str, fallback: str | None, extensions: set = IMAGE_EXTENSIONS) -> str | None:
     """Foto propia de app/static/img/<folder>/<name>.<jpg|jpeg|png|webp|avif>.
 
     Si no existe, devuelve `fallback` (la foto de Unsplash). No importa la
@@ -42,7 +43,7 @@ def local_image(folder: str, name: str, fallback: str) -> str:
     directory = IMG_DIR / folder
     if directory.is_dir():
         for file in directory.iterdir():
-            if file.stem.lower() == name.lower() and file.suffix.lower() in IMAGE_EXTENSIONS:
+            if file.stem.lower() == name.lower() and file.suffix.lower() in extensions:
                 return f"/static/img/{folder}/{file.name}?v={int(file.stat().st_mtime)}"
     return fallback
 
@@ -51,7 +52,7 @@ def local_image(folder: str, name: str, fallback: str) -> str:
 # Datos que no cambian con el idioma
 # ---------------------------------------------------------------------------
 HERO_PHOTO = ("portada", "portada", "1600596542815-ffad4c1539a9")  # (carpeta, nombre, reserva)
-HERO_VIDEO = None  # p. ej. "/static/video/hero.mp4"
+HERO_VIDEO = "portada.mp4"  # vídeo en bucle de img/portada/ (sin sonido); si no existe, se usa la foto
 
 EXPERIENCE_PHOTOS = [
     "1612872087720-bb876e2e67d1",
@@ -446,7 +447,7 @@ def get_home_content(lang: str = DEFAULT_LANGUAGE) -> HomeContent:
         hero=Hero(
             t["hero_headline"],
             local_image(hero_folder, hero_name, unsplash(hero_fallback, 2000)),
-            HERO_VIDEO,
+            local_image(hero_folder, Path(HERO_VIDEO).stem, None, VIDEO_EXTENSIONS) if HERO_VIDEO else None,
             t["scroll_hint"],
         ),
         intro=Intro(t["intro_title"], t["intro_paragraphs"], t["quote"]),

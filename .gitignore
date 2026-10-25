@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 .venv/
 data/
+
+# Vídeo original (la web usa la versión optimizada portada.mp4)
+app/static/img/portada/video_casa.mp4
