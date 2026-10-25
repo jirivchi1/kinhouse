@@ -56,6 +56,7 @@ Vale cualquier extensión (`.jpg`, `.jpeg`, `.png`, `.webp`, `.avif`), en mayús
 |---|---|---|
 | Portada | `img/portada/` | `portada` |
 | Cómo trabajamos (pestañas) | `img/como-nos-movemos/` | `casas_fundadores` (ya subida), `llamadas_semanales`, `plataforma_online`, `talleres`, `mentoria` |
+| Recuerdos de los fines de semana | `img/recuerdos/` | `cata_vinos`, `ruta_caballo`, `yoga_animales`, `playa`, `vacas_quesos`, `barbacoa` |
 | Anillo de experiencias | `img/experiencias/` | (pendiente de conectar) |
 | Testimonios (caras) | `img/familia/` | (pendiente de conectar) |
 
@@ -99,34 +100,63 @@ Se mueven solos de derecha a izquierda en bucle y se paran al pasar el ratón. L
 de testimonios (10 s por tarjeta, en `_testimonials.html`). Con "reducir movimiento" activado en el sistema,
 se quedan quietos con scroll horizontal.
 
-## Calendario del inicio ("Elige tus fechas")
+## Calendario del inicio: "Un plan" o "Unos días"
 
-Va justo antes del anillo de fotos. Es un mes completo en cuadros con los eventos de cada día (en el móvil, un
-punto en el día y la lista de eventos debajo). Primer clic: llegada; segundo clic: salida. Con las dos fechas se
-activa "Únete a la familia", que abre el formulario. Las fechas se comprueban también en el servidor.
+Va justo después del anillo de fotos. Arriba tiene dos pestañas (como Airbnb con alojamientos y experiencias)
+para que cada persona diga qué quiere:
 
-Disponibilidad, en `app/models/availability.py`:
+- **Un plan**: cada día con plan muestra hora, nombre y plazas que quedan ("quedan 3"). Al tocar el día, la
+  barra de abajo enseña el plan y "Reservar plaza" abre el formulario.
+- **Unos días**: primer clic llegada, segundo clic último día (el mismo si es solo uno). Se reserva y se cobra
+  **por día**, ambos incluidos: del 8 al 12 son 5 días. Cada día muestra las plazas libres del grupo de 6.
 
-- `BLOCKED_RANGES`: rangos de noches no disponibles `("AAAA-MM-DD", "AAAA-MM-DD")`, ambos incluidos.
+Al reservar unos días, el formulario enseña los planes que caen dentro de la estancia (p. ej. de viernes a domingo)
+para apuntarse. Se guardan en `stay_events` y ocupan plaza en el plan igual que una reserva suelta.
+
+**El precio no sale en el calendario**: solo aparece dentro del formulario, cuando ya han elegido, con el total
+según las personas y la frase "No pagas nada ahora". Así el precio no frena antes de tiempo.
+
+Para quitar la pestaña "Unos días", pon `STAYS_ENABLED = False` en `app/models/availability.py`.
+
+Planes, en `app/models/events.py`:
+
+- `EVENTS`: cada plan con hora, precio por persona y plazas. Los nombres están en `TEXTS`.
+- `WEEKLY_PROGRAM`: los planes de viernes, sábado y domingo. Va rotando: una semana la primera fila, la
+  siguiente la segunda, y así. Las fechas se calculan solas.
+- `SPECIAL_EVENTS`: planes sueltos en un día concreto, p. ej. `{"2026-12-05": ["bbq"]}`.
+- `EXAMPLE_BOOKINGS`: reservas inventadas para ver plazas ocupadas. Pon `USE_EXAMPLE_DATA = False` cuando
+  empieces con reservas de verdad.
+- Cada reserva enviada ocupa tantas plazas como personas apunta. Si cambias su `"status"` a `"rejected"`, las
+  plazas vuelven. El servidor no deja reservar más plazas de las que quedan.
+
+Estancias por días, en `app/models/availability.py`:
+
+- `STAY_PRICE_PER_DAY`: precio por persona y día (20 €). Solo se ve en el formulario.
+- `BLOCKED_RANGES`: días cerrados `("AAAA-MM-DD", "AAAA-MM-DD")`, ambos incluidos.
   Hay uno de ejemplo (Navidad): cámbialo o bórralo.
 - `BOOKING_WINDOW_DAYS`: hasta cuántos días en el futuro se puede reservar (365).
-- `MIN_NIGHTS` / `MAX_NIGHTS`: duración mínima y máxima (1 y 90 noches).
-
-Eventos, en `app/models/events.py`:
-
-- `WEEKLY_PROGRAM`: los eventos de viernes, sábado y domingo. Va rotando: una semana la primera fila, la
-  siguiente la segunda, y así. Las horas están en `EVENTS` y los nombres en `TEXTS`.
-- `SPECIAL_EVENTS`: eventos sueltos en un día concreto, p. ej. `{"2026-12-05": ["bbq"]}`.
+- `MIN_DAYS` / `MAX_DAYS`: duración mínima y máxima (1 y 90 días).
 
 Plazas (grupos de 6), en `app/models/availability.py`:
 
-- `GROUP_SIZE`: plazas por noche (6). Cada día del calendario muestra las que quedan ("4 plazas", "¡Quedan 2!",
-  "¡Última plaza!", "Completo"), y al elegir fechas la barra dice cuántas quedan en todas esas noches.
-- Cada solicitud enviada ocupa 1 plaza cada noche de su estancia, aunque esté pendiente. Si cambias su
-  `"status"` a `"rejected"` en el JSON, la plaza vuelve a quedar libre. El servidor no deja apuntarse a una noche
-  completa (por si dos personas lo intentan a la vez).
+- `GROUP_SIZE`: plazas por día (6). Cada día del calendario muestra las que quedan ("4 plazas", "¡Quedan 2!",
+  "¡Última plaza!", "Completo"), y al elegir fechas la barra dice cuántas quedan en todos esos días.
+- Cada solicitud enviada ocupa tantas plazas como personas apunta cada día de su estancia, aunque esté pendiente. Si cambias su
+  `"status"` a `"rejected"` en el JSON, la plaza vuelve a quedar libre. El servidor no deja apuntarse a un día
+  completo (por si dos personas lo intentan a la vez).
 - `EXAMPLE_STAYS` son estancias inventadas para ver el calendario con plazas ocupadas. Cuando empieces a recibir
   solicitudes de verdad, pon `USE_EXAMPLE_DATA = False`.
 
-Cada solicitud guarda `check_in`, `check_out`, `nights` e `info_pack_sent: false`. El info pack se envía a mano
+Cada solicitud guarda `type` (`event` o `stay`), el plan o los días (`check_in`, `check_out`, `days`), `people` e `info_pack_sent: false`. El info pack se envía a mano
 por ahora: cuando lo mandes, cambia `info_pack_sent` a `true` en el JSON.
+
+## Recuerdos, familia y miembros (inicio)
+
+- **Recuerdos de los fines de semana** (entre el calendario y "Cómo trabajamos tu idea o proyecto"): 6 fotos de los
+  planes. Pon las tuyas en `img/recuerdos/` con los nombres de la tabla. Pies de foto en `TEXTS[...]["memories"]`.
+- **Conoce a la familia**: miembros que cuentan su idea y lo que aportan (`TEXTS[...]["testimonials"]`, que son
+  ejemplos: cámbialos por personas reales). Debajo está el bloque **"¿Quieres ser parte de la familia?"**
+  (`member_title`, `member_text`, `member_benefits`, `member_cta`).
+- **Quiero ser miembro** abre su propio formulario (`MEMBER_SECTIONS` en `app/models/application.py`): a qué se
+  dedica, cómo le gustaría aportar (taller, mentoría, planes…) y algo más sobre su idea. Se envía a
+  `POST /<lang>/member/` y se guarda en `data/applications/` con `"type": "member"`. No ocupa plazas.

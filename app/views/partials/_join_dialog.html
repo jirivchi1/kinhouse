@@ -1,7 +1,8 @@
 {#
-  Formulario de "Únete a la familia". Aparece encima de la página al pulsar el botón
-  del calendario, con las fechas ya elegidas. Si el servidor encuentra errores, la
-  página vuelve con data-open y el formulario se abre solo, con lo que ya estaba escrito.
+  Formulario de "Únete a la familia". Aparece encima de la página al pulsar "Reservar plaza"
+  en el calendario, con el plan o los días ya elegidos. Aquí (y no antes) se enseña el precio,
+  con el total según las personas. Si el servidor encuentra errores, la página vuelve con
+  data-open y el formulario se abre solo, con lo que ya estaba escrito.
 #}
 {% set labels = calendar.labels %}
 <dialog class="join-dialog" id="join-dialog" aria-labelledby="join-dialog-title"{% if open_form %} data-open{% endif %}>
@@ -16,11 +17,20 @@
 
     <div class="join-dialog__dates">
       <div>
-        <span class="join-dialog__dates-label">{{ labels.your_dates }}</span>
+        <span class="join-dialog__dates-label" data-dialog-label>{{ labels.your_plan if form.booking_type == "event" else labels.your_dates }}</span>
         <strong data-dialog-dates></strong>
+        <span class="join-dialog__price" data-dialog-price></span>
       </div>
       <button type="button" class="join-dialog__change" data-dialog-change>{{ labels.change_dates }}</button>
     </div>
+    <p class="join-dialog__pay">{{ labels.pay_later }}</p>
+
+    {# Solo en "Unos días": los planes que caen dentro de la estancia, para apuntarse (los rellena calendar.js) #}
+    <fieldset class="join-dialog__plans" data-stay-events data-selected='{{ form.stay_events | tojson }}' hidden>
+      <legend class="field__label">{{ labels.stay_events_title }}</legend>
+      <p class="field__help">{{ labels.stay_events_help }}</p>
+      <div class="join-dialog__plans-list" data-stay-events-list></div>
+    </fieldset>
 
     {% if form.has_errors %}
       <p class="join__alert" role="alert">{{ form.dates_error or form.texts.error_summary }}</p>
@@ -31,7 +41,9 @@
       <label>Website <input type="text" name="{{ form.honeypot }}" tabindex="-1" autocomplete="off"></label>
     </div>
 
-    {# Las rellena el calendario #}
+    {# Los rellena el calendario: qué se reserva ("event" o "stay"), el plan elegido o los días #}
+    <input type="hidden" name="booking_type" value="{{ form.booking_type }}" data-booking-type>
+    <input type="hidden" name="event_id" value="{{ form.event_id }}" data-event-id>
     <input type="hidden" name="check_in" value="{{ form.check_in }}" data-check-in>
     <input type="hidden" name="check_out" value="{{ form.check_out }}" data-check-out>
 

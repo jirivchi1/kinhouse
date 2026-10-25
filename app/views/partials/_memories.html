@@ -1,0 +1,15 @@
+{# Recuerdos de los fines de semana: fotos de los planes (pocas y ligeras, se cargan al llegar) #}
+{% set mem = content.memories %}
+<section class="memories container" id="memories">
+  <h2 class="section-title">{{ mem.title }}</h2>
+  <p class="memories__subtitle">{{ mem.subtitle }}</p>
+
+  <ul class="memories__grid">
+    {% for item in mem.items %}
+      <li class="memory">
+        <img class="memory__image" src="{{ item.src }}" alt="{{ item.caption }}" loading="lazy" decoding="async">
+        <span class="memory__caption">{{ item.caption }}</span>
+      </li>
+    {% endfor %}
+  </ul>
+</section>

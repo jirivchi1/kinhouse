@@ -1,0 +1,41 @@
+{#
+  Formulario "Quiero ser miembro". Se abre con el botón de la sección de la familia.
+  Si el servidor encuentra errores, la página vuelve con data-open y se abre solo.
+#}
+{% set form = member_form %}
+{% set texts = member_form.texts.member %}
+<dialog class="join-dialog" id="member-dialog" aria-labelledby="member-dialog-title"
+        data-simple-dialog{% if open_member %} data-open{% endif %}>
+  <form class="join-form" method="post" action="{{ url_for('join.member_submit', lang=layout.lang) }}">
+    <div class="join-dialog__head">
+      <h2 class="join-dialog__title" id="member-dialog-title">{{ texts.title }}</h2>
+      <button type="button" class="join-dialog__close" data-dialog-close aria-label="{{ form.texts.calendar.close }}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <p class="join-dialog__intro">{{ texts.intro }}</p>
+
+    {% if form.has_errors %}
+      <p class="join__alert" role="alert">{{ form.texts.error_summary }}</p>
+    {% endif %}
+
+    {# Campo trampa anti-spam: oculto para las personas #}
+    <div class="hp" aria-hidden="true">
+      <label>Website <input type="text" name="{{ form.honeypot }}" tabindex="-1" autocomplete="off"></label>
+    </div>
+
+    {% for section in form.sections %}
+      <section class="join-form__section">
+        <h3 class="join-form__title">{{ section.title }}</h3>
+        {% for field in section.fields %}
+          {% include "partials/_form_field.html" %}
+        {% endfor %}
+      </section>
+    {% endfor %}
+
+    <p class="join-form__note">{{ form.texts.required_note }}</p>
+    <div class="join-form__actions">
+      <button class="cta" type="submit">{{ texts.submit }}</button>
+    </div>
+  </form>
+</dialog>

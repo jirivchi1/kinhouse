@@ -18,7 +18,9 @@ from app.models import (
     InvalidEmailError,
     SubscriberRepository,
     all_booked_stays,
+    all_bookings,
     build_form,
+    build_member_form,
     calendar_config,
     calendar_events,
     get_home_content,
@@ -40,32 +42,43 @@ def render_page(template: str, lang: str, status: int = 200, **context):
     return response
 
 
+def _applications() -> ApplicationRepository:
+    return ApplicationRepository(current_app.config["APPLICATIONS_DIR"])
+
+
 def booked_stays() -> list:
-    """Estancias que ocupan plaza: solicitudes enviadas (no rechazadas) + datos de ejemplo."""
-    repo = ApplicationRepository(current_app.config["APPLICATIONS_DIR"])
-    return all_booked_stays(repo.booked_stays())
+    """Días de estancia que ocupan plaza: solicitudes enviadas (no rechazadas) + datos de ejemplo."""
+    return all_booked_stays(_applications().booked_stays())
+
+
+def event_bookings():
+    """Plazas ocupadas en cada evento: reservas enviadas (no rechazadas) + datos de ejemplo."""
+    return all_bookings(_applications().booked_events())
 
 
 def booking_calendar(lang: str, form) -> dict:
-    """Datos del calendario del inicio: fechas libres, plazas ocupadas y eventos de cada día."""
+    """Datos del calendario del inicio: plazas de los planes y de los días, y planes de cada día."""
     config = calendar_config(booked_stays())
     return {
         **config,
         "lang": lang,
         "labels": form.texts["calendar"],
-        "events": calendar_events(lang, config["min"], config["max"]),
+        "events": calendar_events(lang, config["min"], config["max"], event_bookings()),
     }
 
 
-def render_home(lang: str, form=None, status: int = 200, open_form: bool = False):
-    """Página de inicio. Si el formulario vuelve con errores, se abre ya desplegado."""
+def render_home(lang: str, form=None, member_form=None, status: int = 200,
+                open_form: bool = False, open_member: bool = False):
+    """Página de inicio. Si un formulario vuelve con errores, se abre ya desplegado."""
     form = form or build_form(lang)
     return render_page(
         "index.html", lang, status=status,
         content=get_home_content(lang),
         form=form,
+        member_form=member_form or build_member_form(lang),
         calendar=booking_calendar(lang, form),
         open_form=open_form,
+        open_member=open_member,
     )
 
 

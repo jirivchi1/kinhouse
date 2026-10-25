@@ -68,7 +68,30 @@
     });
   }
 
+  /* ---------- Formularios emergentes sencillos ("Quiero ser miembro") ---------- */
+  function initSimpleDialogs() {
+    document.querySelectorAll("[data-simple-dialog]").forEach((dialog) => {
+      const close = () => dialog.close();
+      dialog.querySelectorAll("[data-dialog-close]").forEach((btn) => btn.addEventListener("click", close));
+      dialog.addEventListener("click", (e) => {
+        if (e.target === dialog) close(); // clic fuera del formulario
+      });
+      // Vuelve del servidor con errores: abrirlo otra vez con lo escrito
+      if (dialog.hasAttribute("data-open")) dialog.showModal();
+    });
+    document.querySelectorAll("[data-open-dialog]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const dialog = document.querySelector(btn.dataset.openDialog);
+        if (!dialog) return;
+        dialog.showModal();
+        const first = dialog.querySelector(".field__input");
+        if (first) first.focus();
+      });
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
+    initSimpleDialogs();
     initTheme();
     initTabs();
     initNewsletter();

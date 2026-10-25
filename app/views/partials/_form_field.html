@@ -1,5 +1,5 @@
 {# Pinta un campo del formulario según su tipo. Recibe `field` (FormField del modelo). #}
-{% set id = "f-" ~ field.name %}
+{% set id = form.id_prefix ~ "-" ~ field.name %}
 {% set describedby = (id ~ "-help " if field.help else "") ~ (id ~ "-error" if field.error else "") %}
 
 <div class="field field--{{ field.kind }}{% if field.error %} has-error{% endif %}">

@@ -1,11 +1,13 @@
 {#
-  Testimonios en movimiento continuo de derecha a izquierda.
+  Miembros de la familia (su idea y lo que aportan), en movimiento continuo de derecha a izquierda.
+  Debajo, el bloque para hacerse miembro (abre _member_dialog.html).
   La lista se repite 3 veces para que el bucle no tenga huecos en pantallas
   anchas; las copias van con aria-hidden para que los lectores de pantalla
   solo lean la primera. Se pausa al pasar el ratón.
 #}
 <section class="family" id="meet-the-family">
   <h2 class="section-title">{{ content.testimonials_title }}</h2>
+  <p class="family__subtitle">{{ content.testimonials_subtitle }}</p>
 
   <div class="marquee" style="--marquee-duration: {{ content.testimonials | length * 10 }}s">
     <ul class="marquee__track">
@@ -26,5 +28,20 @@
     </ul>
   </div>
 
-  {% include "partials/_cta.html" %}
+  {% set m = content.membership %}
+  <div class="membership container">
+    <div class="membership__text">
+      <h3 class="membership__title">{{ m.title }}</h3>
+      <p>{{ m.text }}</p>
+    </div>
+    <ul class="membership__benefits">
+      {% for benefit in m.benefits %}
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+          {{ benefit }}
+        </li>
+      {% endfor %}
+    </ul>
+    <button type="button" class="cta membership__cta" data-open-dialog="#member-dialog">{{ m.cta }}</button>
+  </div>
 </section>

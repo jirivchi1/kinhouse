@@ -76,6 +76,16 @@ OFFERINGS = [
     ("mentorship", "mentoria", "1544027993-37dbfe43562a"),
 ]
 
+# "Recuerdos de los fines de semana": (foto propia en img/recuerdos/, foto de reserva)
+MEMORIES = [
+    ("cata_vinos", "1558670460-cad0c19b1840"),
+    ("ruta_caballo", "1771102768656-87d4e54e9a48"),
+    ("yoga_animales", "1634140325686-b507b470e48a"),
+    ("playa", "1767206105936-468e76a69fe4"),
+    ("vacas_quesos", "1596733430284-f7437764b1a9"),
+    ("barbacoa", "1579405317876-9340f1d26061"),
+]
+
 PEOPLE = [  # (nombre, país, avatar)
     ("Lara", "NL", "1494790108377-be9c29b29330"),
     ("Joris", "NL", "1507003211169-0a1dd7228f2d"),
@@ -123,7 +133,7 @@ TEXTS = {
             ("Night campfire", "Late nights"),
             ("Group working on laptops", "Co-working"),
         ],
-        "how_title": "How we work",
+        "how_title": "How we work on your idea or project",
         "offerings": [  # (nombre, descripción)
             ("Founder Houses",
              "Thoughtfully facilitated retreats. Curated for play, connection and breakthroughs."),
@@ -139,26 +149,48 @@ TEXTS = {
             ("Mentorship",
              "Book 1on1 calls with people that have been through the journey."),
         ],
-        "booking_title": "Pick your dates",
-        "booking_subtitle": "Groups of {capacity} people. See what's happening each day, how many spots are "
-                            "left and select your check-in and check-out.",
-        "testimonials_title": "Meet the Family",
-        "testimonials": [  # (cargo, testimonio)
-            ("Founder of StudioLaar",
-             "I traded irregular income and client chasing for a stable retainer client "
-             "in just 2 months with the Kinhaus family."),
-            ("Founder of Timmer Media",
-             "I loved what I was building, but it wasn't making money yet. After joining, I first secured "
-             "3 paying clients in a month to create income, which allowed me to fully focus on my main business."),
-            ("Founder of North of Now",
-             "I went from burning out on a single demanding client to thriving with 2 dream clients."),
-            ("Founder of Okeano",
-             "I went from feeling lost on what step to take next. To going all in on my passion, "
-             "hosting 4 storytelling workshops in a month."),
-            ("Founder of Hof van Metamorfose",
-             "I had the idea, but couldn't get it out. After joining, I launched my site, started posting "
-             "consistently on YouTube & IG and welcomed my first community members."),
+        "booking_title": "Book a plan or a few days",
+        "booking_subtitle": "Come for a plan or stay a few days in groups of {capacity}. "
+                            "See how many spots are left and save yours in a minute.",
+        "memories_title": "Weekend memories",
+        "memories_subtitle": "This is what our plans look like: people arrive as strangers and leave as friends.",
+        "memories": [  # pie de cada foto, en el orden de MEMORIES
+            "Wine tasting",
+            "Horse riding",
+            "Yoga with animals",
+            "Sunset at the beach",
+            "Cows & cheese",
+            "Barbecue & campfire",
         ],
+        "testimonials_title": "Meet the Family",
+        "testimonials_subtitle": "People who came for a plan, stayed and now bring what they know.",
+        "testimonials": [  # (lo que aporta, su idea y su aportación)
+            ("Brand designer · personal brand workshop",
+             "I came for a weekend to disconnect and stayed in the family. Now I run the personal brand "
+             "workshop and help others give their project a face."),
+            ("Video creator · content workshop",
+             "My idea was to make a living from video. Here I found my first clients, and now I teach how to "
+             "film with your phone in the workshops at the house."),
+            ("Coach · 1on1 mentoring",
+             "I help people who are just starting to bring order to their idea. It's what I wish I'd had: "
+             "someone who has already been there."),
+            ("Storyteller · campfire nights",
+             "The best ideas come up around the fire. I host the storytelling nights, and a new project "
+             "always comes out of them."),
+            ("Community builder · AI workshop",
+             "I launched my community with the family's help. Now I return the favour with a workshop on AI "
+             "tools for small businesses."),
+        ],
+        "member_title": "Want to be part of the family?",
+        "member_text": "Become a member: you join the community group and can bring what you know, as a "
+                       "mentor, running a workshop or helping with the plans. That's how we all grow.",
+        "member_benefits": [
+            "Private group with the other members",
+            "Run workshops or mentoring sessions",
+            "Priority on plans and stays",
+            "Meet professionals with the same drive",
+        ],
+        "member_cta": "I want to be a member",
         "faq_title": "FAQ",
         "faq": [  # (pregunta, [párrafos de respuesta])
             ("What if I'm just starting out?", [
@@ -233,7 +265,7 @@ TEXTS = {
             ("Hoguera de noche", "Noches largas"),
             ("Grupo trabajando con portátiles", "Coworking"),
         ],
-        "how_title": "Cómo trabajamos",
+        "how_title": "Cómo trabajamos tu idea o proyecto",
         "offerings": [
             ("Casas de fundadores",
              "Retiros facilitados con cuidado. Pensados para jugar, conectar y lograr grandes avances."),
@@ -249,27 +281,48 @@ TEXTS = {
             ("Mentoría",
              "Reserva llamadas 1 a 1 con personas que ya han recorrido el camino."),
         ],
-        "booking_title": "Elige tus fechas",
-        "booking_subtitle": "Grupos de {capacity} personas. Mira qué eventos hay cada día, cuántas plazas "
-                            "quedan y marca tu llegada y tu salida.",
-        "testimonials_title": "Conoce a la familia",
-        "testimonials": [
-            ("Fundadora de StudioLaar",
-             "Cambié los ingresos irregulares y perseguir clientes por un cliente fijo mensual "
-             "en solo 2 meses con la familia Kinhaus."),
-            ("Fundador de Timmer Media",
-             "Me encantaba lo que estaba construyendo, pero aún no generaba dinero. Al unirme, primero conseguí "
-             "3 clientes de pago en un mes para tener ingresos, y eso me permitió centrarme por completo "
-             "en mi negocio principal."),
-            ("Fundadora de North of Now",
-             "Pasé de quemarme con un único cliente muy exigente a crecer con 2 clientes de ensueño."),
-            ("Fundador de Okeano",
-             "Pasé de sentirme perdido sin saber cuál era el siguiente paso a apostarlo todo por mi pasión, "
-             "organizando 4 talleres de storytelling en un mes."),
-            ("Fundador de Hof van Metamorfose",
-             "Tenía la idea, pero no conseguía sacarla. Al unirme, lancé mi web, empecé a publicar con "
-             "constancia en YouTube e IG y di la bienvenida a los primeros miembros de mi comunidad."),
+        "booking_title": "Reserva un plan o unos días",
+        "booking_subtitle": "Ven a un plan o quédate unos días en grupos de {capacity}. "
+                            "Mira las plazas que quedan y guarda la tuya en un minuto.",
+        "memories_title": "Recuerdos de los fines de semana",
+        "memories_subtitle": "Así son nuestros planes: gente que llega sin conocerse y se va con amigos.",
+        "memories": [
+            "Cata de vinos",
+            "Ruta a caballo",
+            "Yoga con animales",
+            "Atardecer en la playa",
+            "Vacas y quesos",
+            "Barbacoa y hoguera",
         ],
+        "testimonials_title": "Conoce a la familia",
+        "testimonials_subtitle": "Personas que vinieron a un plan, se quedaron y ahora aportan lo que saben.",
+        "testimonials": [
+            ("Diseñadora de marca · taller de marca personal",
+             "Llegué para un finde de desconexión y me quedé en la familia. Ahora imparto el taller de marca "
+             "personal y ayudo a otros a darle cara a su proyecto."),
+            ("Creador de vídeo · taller de contenido",
+             "Mi idea era vivir del vídeo. Aquí encontré mis primeros clientes y ahora enseño a grabar con el "
+             "móvil en los talleres de la casa."),
+            ("Coach · mentoría 1 a 1",
+             "Acompaño a quien está empezando a ordenar su idea. Es lo que me habría gustado tener a mí: "
+             "alguien que ya ha pasado por ahí."),
+            ("Storyteller · noches de hoguera",
+             "Las mejores ideas salen alrededor del fuego. Organizo las noches de historias y siempre sale "
+             "algún proyecto nuevo."),
+            ("Creador de comunidades · taller de IA",
+             "Lancé mi comunidad con ayuda de la familia. Ahora devuelvo el favor con un taller de "
+             "herramientas de IA para negocios pequeños."),
+        ],
+        "member_title": "¿Quieres ser parte de la familia?",
+        "member_text": "Hazte miembro: entras en el grupo de la comunidad y puedes aportar lo que sabes, como "
+                       "mentor, impartiendo un taller o ayudando con los planes. Así crecemos todos.",
+        "member_benefits": [
+            "Grupo privado con el resto de miembros",
+            "Imparte talleres o mentorías",
+            "Prioridad en planes y estancias",
+            "Conoce a profesionales con tus mismas ganas",
+        ],
+        "member_cta": "Quiero ser miembro",
         "faq_title": "Preguntas frecuentes",
         "faq": [
             ("¿Y si estoy empezando?", [
@@ -374,6 +427,29 @@ class Booking:
 
 
 @dataclass
+class Memory:
+    """Foto de un plan de fin de semana (sección "Recuerdos")."""
+    src: str
+    caption: str
+
+
+@dataclass
+class Memories:
+    title: str
+    subtitle: str
+    items: list[Memory]
+
+
+@dataclass
+class Membership:
+    """Bloque "¿Quieres ser parte de la familia?" de la sección de la familia."""
+    title: str
+    text: str
+    benefits: list[str]
+    cta: str
+
+
+@dataclass
 class Testimonial:
     name: str
     flag: str
@@ -415,8 +491,11 @@ class HomeContent:
     experiences: list[Experience]
     how_we_move: HowWeMove
     booking: Booking
+    memories: Memories
     testimonials_title: str
+    testimonials_subtitle: str
     testimonials: list[Testimonial]
+    membership: Membership
     faq_title: str
     faq: list[FaqItem]
     footer: Footer
@@ -465,7 +544,17 @@ def get_home_content(lang: str = DEFAULT_LANGUAGE) -> HomeContent:
             ],
         ),
         booking=Booking(t["booking_title"], t["booking_subtitle"].format(capacity=GROUP_SIZE)),
+        memories=Memories(
+            t["memories_title"],
+            t["memories_subtitle"],
+            [
+                Memory(local_image("recuerdos", photo, unsplash(fallback, 700, 700)), caption)
+                for (photo, fallback), caption in zip(MEMORIES, t["memories"], strict=True)
+            ],
+        ),
         testimonials_title=t["testimonials_title"],
+        testimonials_subtitle=t["testimonials_subtitle"],
+        membership=Membership(t["member_title"], t["member_text"], t["member_benefits"], t["member_cta"]),
         testimonials=[
             Testimonial(name, flag, role, quote, unsplash(avatar, 160, 160))
             for (name, flag, avatar), (role, quote) in zip(PEOPLE, t["testimonials"], strict=True)

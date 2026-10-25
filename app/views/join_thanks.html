@@ -1,16 +1,19 @@
 {% extends "base.html" %}
 
-{% block title %}{{ form.texts.thanks_title }} · {{ layout.brand }}{% endblock %}
+{% block title %}{{ title }} · {{ layout.brand }}{% endblock %}
 
 {% block body %}
   {% include "partials/_page_header.html" %}
 
   <main class="join join--thanks container">
-    <h1 class="section-title section-title--xl">{{ form.texts.thanks_title }}</h1>
-    {% if stay %}
-      <p class="thanks-dates"><span>{{ form.texts.thanks_dates }}</span> {{ stay }}</p>
+    <h1 class="section-title section-title--xl">{{ title }}</h1>
+    {% if summary %}
+      <p class="thanks-dates">
+        <span>{{ form.texts.thanks_event if is_event else form.texts.thanks_dates }}</span> {{ summary }}
+        {% for plan in plans %}<small>+ {{ plan }}</small>{% endfor %}
+      </p>
     {% endif %}
-    <p class="join__intro">{{ form.texts.thanks_text }}</p>
-    <p class="join__back"><a href="{{ url_for('main.index', lang=layout.lang) }}">{{ form.texts.back }}</a></p>
+    <p class="join__intro">{{ text }}</p>
+    <p class="join__back"><a href="{{ url_for('main.index', lang=layout.lang, _anchor='calendar') }}">{{ form.texts.back }}</a></p>
   </main>
 {% endblock %}
