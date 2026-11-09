@@ -9,9 +9,15 @@
 
   <a class="hero__logo" href="{{ url_for('main.index', lang=layout.lang) }}">{{ layout.brand }}</a>
 
-  <h1 class="hero__headline">
-    {% for line in hero.headline %}<span>{{ line }}</span>{% endfor %}
-  </h1>
+  <div class="hero__content">
+    <h1 class="hero__headline">
+      {% for line in hero.headline %}<span>{{ line }}</span>{% endfor %}
+    </h1>
+    <p class="hero__location">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+      {{ hero.location }}
+    </p>
+  </div>
 
   <p class="hero__hint">{{ hero.scroll_hint }}</p>
 </header>

@@ -1,6 +1,10 @@
-{% set hwm = content.how_we_move %}
-<section class="how container" id="how-we-move">
-  <h2 class="section-title section-title--xl">{{ hwm.title }}</h2>
+{#
+  "Cómo trabajamos tu idea o proyecto": pestañas en versión pequeña.
+  Va dentro de la sección "¿Vienes a trabajar en tu idea?" (_work.html).
+#}
+{% set hwm = content.work.how_we_move %}
+<div class="how how--compact" id="how-we-move">
+  <h3 class="how__title">{{ hwm.title }}</h3>
 
   <div class="tabs" role="tablist" aria-label="{{ hwm.title }}">
     {% for item in hwm.offerings %}
@@ -19,4 +23,4 @@
       <p class="panel__text">{{ item.description }}</p>
     </div>
   {% endfor %}
-</section>
+</div>

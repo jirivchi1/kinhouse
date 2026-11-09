@@ -1,0 +1,20 @@
+{# "Quién está detrás": foto propia en img/informacion/ismael.* (si no hay, se ven las iniciales) #}
+{% set about = content.about %}
+<section class="about container" id="about">
+  <div class="about__card">
+    {% if about.photo %}
+      <img class="about__photo" src="{{ about.photo }}" alt="{{ about.name }}" loading="lazy">
+    {% else %}
+      <span class="about__photo about__photo--initials" aria-hidden="true">{{ about.initials }}</span>
+    {% endif %}
+
+    <div class="about__body">
+      <p class="about__kicker">{{ about.title }}</p>
+      <h2 class="about__name">{{ about.name }}</h2>
+      <ul class="about__roles">
+        {% for role in about.roles %}<li>{{ role }}</li>{% endfor %}
+      </ul>
+      {% for paragraph in about.text %}<p class="about__text">{{ paragraph }}</p>{% endfor %}
+    </div>
+  </div>
+</section>

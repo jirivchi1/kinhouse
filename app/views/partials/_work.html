@@ -1,0 +1,14 @@
+{#
+  Segunda etapa: grupos (también internacionales) que vienen unos días a trabajar en su idea.
+  El botón lleva al calendario con la pestaña "Unos días" ya elegida (calendar.js, data-calendar-mode).
+#}
+{% set work = content.work %}
+<section class="work container" id="work">
+  <div class="work__intro">
+    <h2 class="section-title">{{ work.title }}</h2>
+    <p class="work__subtitle">{{ work.subtitle }}</p>
+    <a class="cta work__cta" href="#calendar" data-calendar-mode="stays">{{ work.cta }}</a>
+  </div>
+
+  {% include "partials/_how_we_move.html" %}
+</section>

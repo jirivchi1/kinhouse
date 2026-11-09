@@ -56,6 +56,8 @@ Vale cualquier extensión (`.jpg`, `.jpeg`, `.png`, `.webp`, `.avif`), en mayús
 |---|---|---|
 | Portada | `img/portada/` | `portada` |
 | Cómo trabajamos (pestañas) | `img/como-nos-movemos/` | `casas_fundadores` (ya subida), `llamadas_semanales`, `plataforma_online`, `talleres`, `mentoria` |
+| Quién está detrás (tu foto) | `img/informacion/` | `ismael` (sin foto se ven las iniciales) |
+| Dónde estamos (mapa) | `img/informacion/` | `mapa_web.jpg` (versión ligera de `mapa.jpg`) |
 | Recuerdos de los fines de semana | `img/recuerdos/` | `cata_vinos`, `ruta_caballo`, `yoga_animales`, `playa`, `vacas_quesos`, `barbacoa` |
 | Anillo de experiencias | `img/experiencias/` | (pendiente de conectar) |
 | Testimonios (caras) | `img/familia/` | (pendiente de conectar) |
@@ -108,7 +110,7 @@ para que cada persona diga qué quiere:
 - **Un plan**: cada día con plan muestra hora, nombre y plazas que quedan ("quedan 3"). Al tocar el día, la
   barra de abajo enseña el plan y "Reservar plaza" abre el formulario.
 - **Unos días**: primer clic llegada, segundo clic último día (el mismo si es solo uno). Se reserva y se cobra
-  **por día**, ambos incluidos: del 8 al 12 son 5 días. Cada día muestra las plazas libres del grupo de 6.
+  **por día**, ambos incluidos: del 8 al 12 son 5 días. Cada día muestra las plazas libres.
 
 Al reservar unos días, el formulario enseña los planes que caen dentro de la estancia (p. ej. de viernes a domingo)
 para apuntarse. Se guardan en `stay_events` y ocupan plaza en el plan igual que una reserva suelta.
@@ -139,7 +141,7 @@ Estancias por días, en `app/models/availability.py`:
 
 Plazas (grupos de 6), en `app/models/availability.py`:
 
-- `GROUP_SIZE`: plazas por día (6). Cada día del calendario muestra las que quedan ("4 plazas", "¡Quedan 2!",
+- `DAILY_CAPACITY`: plazas por día en la casa (6). No es un tamaño de grupo: pueden venir varios grupos y no se menciona en la web. Cada día del calendario muestra las que quedan ("4 plazas", "¡Quedan 2!",
   "¡Última plaza!", "Completo"), y al elegir fechas la barra dice cuántas quedan en todos esos días.
 - Cada solicitud enviada ocupa tantas plazas como personas apunta cada día de su estancia, aunque esté pendiente. Si cambias su
   `"status"` a `"rejected"` en el JSON, la plaza vuelve a quedar libre. El servidor no deja apuntarse a un día
@@ -160,3 +162,19 @@ por ahora: cuando lo mandes, cambia `info_pack_sent` a `true` en el JSON.
 - **Quiero ser miembro** abre su propio formulario (`MEMBER_SECTIONS` en `app/models/application.py`): a qué se
   dedica, cómo le gustaría aportar (taller, mentoría, planes…) y algo más sobre su idea. Se envía a
   `POST /<lang>/member/` y se guarda en `data/applications/` con `"type": "member"`. No ocupa plazas.
+
+## Orden de la página y público
+
+La web prioriza, por este orden:
+
+1. **Planes de fin de semana** para gente de Elche y Alicante que quiere desconectar en una casa de campo y conocer
+   gente con inquietudes: portada (con "Casa de campo · Elche"), intro, **Cómo funciona** (3 pasos y "desde X €"),
+   calendario y recuerdos.
+2. **Segunda etapa: "¿Vienes a trabajar en tu idea?"**, para grupos (también internacionales) que vienen unos días.
+   Dentro van, en pequeño, las pestañas de "Cómo trabajamos tu idea o proyecto". El botón "Reservar unos días"
+   abre el calendario en la pestaña "Unos días".
+3. **Hacerse miembro**, en "Conoce a la familia".
+
+Después: **Quién está detrás** (Ismael), **Preguntas frecuentes** y **Dónde estamos** (mapa y tiempos en coche).
+Los textos de todo esto están en `TEXTS` de `app/models/site_content.py` (`hero_location`, `how_it_works`,
+`work_*`, `about_*`, `location_*`, `places`, `faq`). Los "desde X €" se calculan solos con los precios reales.

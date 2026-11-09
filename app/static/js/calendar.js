@@ -84,6 +84,12 @@
       this.build();
       this.render();
       this.initDialog();
+
+      // Botones de fuera del calendario que eligen la pestaña (p. ej. "Reservar unos días")
+      if (this.cfg.staysEnabled) {
+        document.querySelectorAll("[data-calendar-mode]").forEach((link) =>
+          link.addEventListener("click", () => this.setMode(link.dataset.calendarMode)));
+      }
     }
 
     get eventsMode() {

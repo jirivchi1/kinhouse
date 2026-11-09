@@ -3,7 +3,7 @@
 Las estancias se reservan y se cobran POR DÍA: del 8 al 12 son 5 días (ambos
 incluidos), y la plaza queda ocupada todos esos días.
 
-- GROUP_SIZE: plazas por día (el tamaño del grupo).
+- DAILY_CAPACITY: plazas por día en la casa (no es un tamaño de grupo: pueden venir varios grupos).
 - Cada solicitud enviada (pendiente o aceptada) ocupa tantas plazas como personas
   apunta cada día de su estancia. Las rechazadas no cuentan: su plaza vuelve a quedar libre.
 - Un día con todas las plazas ocupadas está "Completo" y no se puede reservar.
@@ -16,7 +16,7 @@ from datetime import date, timedelta
 # Pestaña "Unos días" del calendario. Con False solo se pueden reservar planes.
 STAYS_ENABLED = True
 
-GROUP_SIZE = 6  # plazas por día
+DAILY_CAPACITY = 6  # plazas por día en la casa (pueden ser de varios grupos de distinto tamaño)
 STAY_PRICE_PER_DAY = 20  # € por persona y día (solo se enseña dentro del formulario)
 BOOKING_WINDOW_DAYS = 365  # hasta cuántos días en el futuro se puede reservar
 MIN_DAYS = 1
@@ -112,10 +112,10 @@ def calendar_config(stays: list[tuple[str, str, int]], today: date | None = None
         "max": last.isoformat(),
         "staysEnabled": STAYS_ENABLED,
         "blocked": sorted(d.isoformat() for d in _closed_days() if in_window(d)),
-        "capacity": GROUP_SIZE,
+        "capacity": DAILY_CAPACITY,
         "stayPrice": STAY_PRICE_PER_DAY,
         # Solo los días con alguien; el resto tiene todas las plazas libres
-        "taken": {d.isoformat(): min(n, GROUP_SIZE) for d, n in sorted(taken_spots(stays).items()) if in_window(d)},
+        "taken": {d.isoformat(): min(n, DAILY_CAPACITY) for d, n in sorted(taken_spots(stays).items()) if in_window(d)},
         "minDays": MIN_DAYS,
         "maxDays": MAX_DAYS,
     }
@@ -169,6 +169,6 @@ def validate_stay(check_in: str, check_out: str, stays: list[tuple[str, str, int
     if any(day in _closed_days() for day in days):
         raise StayError("dates_unavailable")
     taken = taken_spots(stays)
-    if any(taken[day] + people > GROUP_SIZE for day in days):
+    if any(taken[day] + people > DAILY_CAPACITY for day in days):
         raise StayError("dates_full")
     return stay

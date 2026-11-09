@@ -11,7 +11,7 @@ solo tienes que editar este archivo (o sustituirlo por una base de datos).
 from dataclasses import dataclass
 from pathlib import Path
 
-from app.models.availability import GROUP_SIZE
+from app.models.availability import STAY_PRICE_PER_DAY
 
 SUPPORTED_LANGUAGES = ("en", "es")
 DEFAULT_LANGUAGE = "en"
@@ -31,6 +31,11 @@ def unsplash(photo_id: str, width: int = 800, height: int | None = None) -> str:
     if height:
         url += f"&h={height}"
     return url
+
+
+def format_price(amount: int, lang: str) -> str:
+    """10 -> '10 €' en español, '€10' en inglés."""
+    return f"{amount} €" if lang == "es" else f"€{amount}"
 
 
 def local_image(folder: str, name: str, fallback: str | None, extensions: set = IMAGE_EXTENSIONS) -> str | None:
@@ -86,6 +91,14 @@ MEMORIES = [
     ("barbacoa", "1579405317876-9340f1d26061"),
 ]
 
+# "Quién está detrás": foto propia en img/informacion/ismael.(jpg|png…). Sin foto se ven las iniciales.
+ABOUT_PHOTO = ("informacion", "ismael")
+
+# "Dónde estamos": mapa en img/informacion/mapa_web.jpg (versión ligera de mapa.jpg)
+MAP_PHOTO = ("informacion", "mapa_web")
+# Tiempos en coche desde la casa (los nombres van traducidos en TEXTS[...]["places"])
+PLACE_MINUTES = [5, 10, 10, 12, 20]
+
 PEOPLE = [  # (nombre, país, avatar)
     ("Lara", "NL", "1494790108377-be9c29b29330"),
     ("Joris", "NL", "1507003211169-0a1dd7228f2d"),
@@ -101,19 +114,20 @@ PEOPLE = [  # (nombre, país, avatar)
 TEXTS = {
     "en": {
         "language_name": "English",
-        "meta_description": "A private community for early-stage lifestyle founders.",
+        "meta_description": "Different weekend plans at a country house in Elche (Alicante, Spain): unplug and "
+                            "meet curious, driven people.",
         "hero_headline": ["Unplug from the routine,", "reconnect with what matters."],
         "scroll_hint": "↓ scroll to learn more",
-        "intro_title": "Clear your head for a weekend, break the routine or move your idea forward: "
-                       "a country house and people who help you do it.",
+        "hero_location": "Country house · Elche (Alicante, Spain)",
+        "intro_title": "Different weekend plans at a country house in Elche: unplug and meet curious, driven people.",
         "intro_paragraphs": [
             [
-                "We believe growth doesn't happen in isolation.",
-                "It happens in the right environment, with the right people, who want the same out of life.",
+                "Every weekend we organise plans in the countryside, 12 minutes from Elche:",
+                "wine tastings, horse riding, yoga with animals, barbecues by the fire…",
             ],
             [
-                "That's why we exist.",
-                "So you can break through your barriers and start living the life you always envisioned.",
+                "You come, unplug and meet people with ideas and the drive to make things happen.",
+                "And if you have a project or a business, you'll find people here to help you push it forward.",
             ],
         ],
         "quote": [
@@ -133,6 +147,20 @@ TEXTS = {
             ("Night campfire", "Late nights"),
             ("Group working on laptops", "Co-working"),
         ],
+        "how_it_works_title": "How it works",
+        "how_it_works": [  # (título, texto) de cada paso
+            ("Pick your plan",
+             "Check the calendar and pick a weekend plan. Or a few days, if you're coming to work on your idea."),
+            ("Save your spot", "Leave your details in a minute. You don't pay anything now."),
+            ("We confirm and you come", "We email you all the details: how to get there, what to bring and how to pay."),
+        ],
+        "how_it_works_prices": "Plans from {from_plan} per person · Stays from {from_day} per person and day",
+        "how_it_works_cta": "See the plans",
+        "work_title": "Coming to work on your idea?",
+        "work_subtitle": "Groups, teams and travellers from abroad who want to spend a few days in the countryside "
+                         "working on their project, 20 minutes from Alicante airport. It's our next stage: if "
+                         "you're interested, book a few days and we'll organise it with you.",
+        "work_cta": "Book a few days",
         "how_title": "How we work on your idea or project",
         "offerings": [  # (nombre, descripción)
             ("Founder Houses",
@@ -150,7 +178,7 @@ TEXTS = {
              "Book 1on1 calls with people that have been through the journey."),
         ],
         "booking_title": "Book a plan or a few days",
-        "booking_subtitle": "Come for a plan or stay a few days in groups of {capacity}. "
+        "booking_subtitle": "Come for a weekend plan or stay a few days. "
                             "See how many spots are left and save yours in a minute.",
         "memories_title": "Weekend memories",
         "memories_subtitle": "This is what our plans look like: people arrive as strangers and leave as friends.",
@@ -191,31 +219,42 @@ TEXTS = {
             "Meet professionals with the same drive",
         ],
         "member_cta": "I want to be a member",
+        "about_title": "Who's behind it",
+        "about_roles": ["Developer", "Solopreneur", "Maker", "Kinhaus host"],
+        "about_text": [
+            "I build digital products from the countryside, and I love making things with my hands and with code.",
+            "I've opened my home so people with the drive to make things have a place to unplug, meet and "
+            "create. I'll be your host.",
+        ],
+        "location_title": "Where we are",
+        "location_subtitle": "In the countryside of Elche (Alicante, Spain), between Elche and the beach.",
+        "places": ["La Hoya supermarket", "La Marina beach", "El Hondo Natural Park", "Elche", "Alicante airport"],
+        "location_note": "By car. We send you the exact address when we confirm your spot.",
+        "minutes": "{n} min",
         "faq_title": "FAQ",
-        "faq": [  # (pregunta, [párrafos de respuesta])
-            ("What if I'm just starting out?", [
-                "Perfect. This community is for people who are serious about leveling up, whether you're just "
-                "getting started or already on your way. We focus on helping you grow both your business and "
-                "yourself, step by step.",
+        "faq": [  # (pregunta, [párrafos de respuesta]). {from_plan} y {from_day} se rellenan solos
+            ("Where is the house?", [
+                "In the countryside of Elche (Alicante, Spain): 12 minutes from Elche, 10 from La Marina beach "
+                "and El Hondo Natural Park, and 20 from Alicante airport. You'll find the map at the end of the page.",
             ]),
-            ("What if I don't have much money yet?", [
-                "That's exactly why this exists. The goal of the community is to help you build momentum, "
-                "clarity, and income, not to drain your wallet.",
+            ("How much does it cost?", [
+                "Plans from {from_plan} per person. Stays from {from_day} per person and day.",
+                "You see the exact price before sending your booking, and you don't pay anything until we confirm "
+                "your spot.",
             ]),
-            ("What if I didn't get any value out of it?", [
-                "If you show up, join the sessions, and genuinely put in the work, and after a year you feel you "
-                "didn't make meaningful progress, we'll refund you in full!",
+            ("Do I have to stay overnight?", [
+                "No. You can come just for the plan and go back home. If you want to stay a few days, choose "
+                "\"A few days\" in the calendar.",
             ]),
-            ("How much time does this take per week?", [
-                "On average 1-2 hours a week.",
-                "You get out what you put in, but this is designed to fit alongside a busy life or business.",
+            ("Can I come on my own?", [
+                "Of course. Almost everyone comes alone: the plans are designed to meet people.",
+            ]),
+            ("What if I have an idea or a business?", [
+                "Perfect. Many of the people who come have projects, and in the workshops and mentoring you can move "
+                "yours forward. If you want to come for a few days to work on it, see \"Coming to work on your idea?\".",
             ]),
             ("What are Kinhaus's core values?", [
                 "1. Playfulness 2. Growth 3. Connection 4. Authenticity 5. Awareness",
-            ]),
-            ("Is it only online?", [
-                "No, it is a hybrid community. Since members live all over the world there are online sessions. "
-                "But at the heart there are the founder houses, which are intimate 1-4 week retreats.",
             ]),
         ],
         "newsletter_title": "Get the latest updates",
@@ -233,19 +272,21 @@ TEXTS = {
     },
     "es": {
         "language_name": "Español",
-        "meta_description": "Una comunidad privada para fundadores en fase inicial.",
+        "meta_description": "Planes de fin de semana distintos en una casa de campo en Elche (Alicante): "
+                            "desconecta y conoce gente con inquietudes.",
         "hero_headline": ["Desconecta de la rutina", "y conecta con lo que importa."],
         "scroll_hint": "↓ desliza para saber más",
-        "intro_title": "Despejarte un finde, romper con la rutina o impulsar tu idea: "
-                       "aquí tienes una casa de campo y gente que te ayuda.",
+        "hero_location": "Casa de campo · Elche (Alicante)",
+        "intro_title": "Planes de fin de semana distintos en una casa de campo en Elche, para desconectar y "
+                       "conocer gente con inquietudes.",
         "intro_paragraphs": [
             [
-                "Creemos que el crecimiento no ocurre en aislamiento.",
-                "Ocurre en el entorno adecuado, con las personas adecuadas, que quieren lo mismo de la vida.",
+                "Cada fin de semana organizamos planes en el campo, a 12 minutos de Elche:",
+                "catas de vino, rutas a caballo, yoga con animales, barbacoas junto al fuego…",
             ],
             [
-                "Por eso existimos.",
-                "Para que rompas tus barreras y empieces a vivir la vida que siempre imaginaste.",
+                "Vienes, desconectas y conoces a gente con ideas y ganas de hacer cosas.",
+                "Y si tienes un proyecto o un negocio, aquí encontrarás quien te ayude a impulsarlo.",
             ],
         ],
         "quote": [
@@ -265,6 +306,20 @@ TEXTS = {
             ("Hoguera de noche", "Noches largas"),
             ("Grupo trabajando con portátiles", "Coworking"),
         ],
+        "how_it_works_title": "Cómo funciona",
+        "how_it_works": [
+            ("Elige tu plan",
+             "Mira el calendario y elige un plan de fin de semana. O unos días, si vienes a trabajar en tu idea."),
+            ("Reserva tu plaza", "Déjanos tus datos en un minuto. No pagas nada ahora."),
+            ("Te confirmamos y vienes", "Te escribimos con todos los detalles: cómo llegar, qué traer y cómo pagar."),
+        ],
+        "how_it_works_prices": "Planes desde {from_plan} por persona · Estancias desde {from_day} por persona y día",
+        "how_it_works_cta": "Ver los planes",
+        "work_title": "¿Vienes a trabajar en tu idea?",
+        "work_subtitle": "Grupos, equipos y viajeros de otros países que quieren pasar unos días en el campo "
+                         "trabajando en su proyecto, a 20 minutos del aeropuerto de Alicante. Es nuestra siguiente "
+                         "etapa: si te interesa, reserva unos días y lo organizamos contigo.",
+        "work_cta": "Reservar unos días",
         "how_title": "Cómo trabajamos tu idea o proyecto",
         "offerings": [
             ("Casas de fundadores",
@@ -282,7 +337,7 @@ TEXTS = {
              "Reserva llamadas 1 a 1 con personas que ya han recorrido el camino."),
         ],
         "booking_title": "Reserva un plan o unos días",
-        "booking_subtitle": "Ven a un plan o quédate unos días en grupos de {capacity}. "
+        "booking_subtitle": "Ven a un plan de fin de semana o quédate unos días. "
                             "Mira las plazas que quedan y guarda la tuya en un minuto.",
         "memories_title": "Recuerdos de los fines de semana",
         "memories_subtitle": "Así son nuestros planes: gente que llega sin conocerse y se va con amigos.",
@@ -323,30 +378,42 @@ TEXTS = {
             "Conoce a profesionales con tus mismas ganas",
         ],
         "member_cta": "Quiero ser miembro",
+        "about_title": "Quién está detrás",
+        "about_roles": ["Programador", "Solopreneur", "Maker", "Anfitrión de Kinhaus"],
+        "about_text": [
+            "Construyo productos digitales desde el campo y me encanta crear cosas con las manos y con código.",
+            "He abierto mi casa para que la gente con ganas de hacer cosas tenga un sitio donde desconectar, "
+            "conocerse y crear. Seré tu anfitrión.",
+        ],
+        "location_title": "Dónde estamos",
+        "location_subtitle": "En el campo de Elche (Alicante), entre Elche y la playa.",
+        "places": ["Supermercado La Hoya", "Playa La Marina", "Parque Natural El Hondo", "Elche",
+                   "Aeropuerto de Alicante"],
+        "location_note": "En coche. La dirección exacta te la enviamos al confirmar tu plaza.",
+        "minutes": "{n} min",
         "faq_title": "Preguntas frecuentes",
         "faq": [
-            ("¿Y si estoy empezando?", [
-                "Perfecto. Esta comunidad es para personas que van en serio con subir de nivel, tanto si acabas "
-                "de empezar como si ya estás en camino. Te ayudamos a hacer crecer tu negocio y a ti, paso a paso.",
+            ("¿Dónde está la casa?", [
+                "En el campo de Elche (Alicante): a 12 minutos de Elche, a 10 de la playa de La Marina y del "
+                "Parque Natural El Hondo, y a 20 del aeropuerto de Alicante. Tienes el mapa al final de la página.",
             ]),
-            ("¿Y si todavía no tengo mucho dinero?", [
-                "Precisamente por eso existe. El objetivo de la comunidad es ayudarte a ganar impulso, "
-                "claridad e ingresos, no vaciarte la cartera.",
+            ("¿Cuánto cuesta?", [
+                "Los planes, desde {from_plan} por persona. Las estancias, desde {from_day} por persona y día.",
+                "Ves el precio exacto antes de enviar tu reserva y no pagas nada hasta que te confirmamos la plaza.",
             ]),
-            ("¿Y si no me aporta nada?", [
-                "Si te presentas, asistes a las sesiones y te implicas de verdad, y después de un año sientes "
-                "que no has avanzado de forma significativa, ¡te devolvemos todo el dinero!",
+            ("¿Tengo que quedarme a dormir?", [
+                "No. Puedes venir solo al plan y volver a casa. Si quieres quedarte unos días, elige «Unos días» "
+                "en el calendario.",
             ]),
-            ("¿Cuánto tiempo requiere a la semana?", [
-                "De media, 1-2 horas a la semana.",
-                "Recibes lo que aportas, pero está pensado para encajar en una vida o un negocio con mucho ritmo.",
+            ("¿Puedo venir solo o sola?", [
+                "Claro. Casi todo el mundo viene solo: los planes están pensados para conocer gente.",
+            ]),
+            ("¿Y si tengo una idea o un negocio?", [
+                "Perfecto. Mucha de la gente que viene tiene proyectos, y en los talleres y mentorías puedes avanzar "
+                "en el tuyo. Si quieres venir unos días a trabajar en él, mira «¿Vienes a trabajar en tu idea?».",
             ]),
             ("¿Cuáles son los valores de Kinhaus?", [
                 "1. Juego 2. Crecimiento 3. Conexión 4. Autenticidad 5. Consciencia",
-            ]),
-            ("¿Es solo online?", [
-                "No, es una comunidad híbrida. Como los miembros viven por todo el mundo, hay sesiones online. "
-                "Pero el corazón son las casas de fundadores: retiros íntimos de 1 a 4 semanas.",
             ]),
         ],
         "newsletter_title": "Recibe las últimas novedades",
@@ -387,6 +454,7 @@ class Hero:
     image: str
     video: str | None
     scroll_hint: str
+    location: str
 
 
 @dataclass
@@ -417,6 +485,58 @@ class Offering:
 class HowWeMove:
     title: str
     offerings: list[Offering]
+
+
+@dataclass
+class Step:
+    number: int
+    title: str
+    text: str
+
+
+@dataclass
+class HowItWorks:
+    """"Cómo funciona" en 3 pasos (antes del calendario)."""
+    title: str
+    steps: list[Step]
+    prices: str
+    cta: str
+
+
+@dataclass
+class Work:
+    """Segunda etapa: "¿Vienes a trabajar en tu idea?" (unos días, grupos) con las pestañas en pequeño."""
+    title: str
+    subtitle: str
+    cta: str
+    how_we_move: "HowWeMove"
+
+
+@dataclass
+class About:
+    """"Quién está detrás"."""
+    title: str
+    name: str
+    roles: list[str]
+    text: list[str]
+    photo: str | None
+    initials: str
+
+
+@dataclass
+class Place:
+    name: str
+    time: str
+
+
+@dataclass
+class Location:
+    """"Dónde estamos": mapa y tiempos en coche."""
+    title: str
+    subtitle: str
+    map: str | None
+    places: list[Place]
+    note: str
 
 
 @dataclass
@@ -489,13 +609,16 @@ class HomeContent:
     hero: Hero
     intro: Intro
     experiences: list[Experience]
-    how_we_move: HowWeMove
+    how_it_works: HowItWorks
+    work: Work
     booking: Booking
     memories: Memories
     testimonials_title: str
     testimonials_subtitle: str
     testimonials: list[Testimonial]
     membership: Membership
+    about: About
+    location: Location
     faq_title: str
     faq: list[FaqItem]
     footer: Footer
@@ -518,9 +641,19 @@ def get_layout(lang: str = DEFAULT_LANGUAGE) -> Layout:
     )
 
 
+OWNER_NAME = "Ismael Rivera"
+
+
 def get_home_content(lang: str = DEFAULT_LANGUAGE) -> HomeContent:
+    # Aquí dentro para no crear una dependencia circular (events.py usa este módulo)
+    from app.models.events import EVENTS
+
     t = TEXTS[lang]
     hero_folder, hero_name, hero_fallback = HERO_PHOTO
+    prices = {
+        "from_plan": format_price(min(event.price for event in EVENTS.values()), lang),
+        "from_day": format_price(STAY_PRICE_PER_DAY, lang),
+    }
 
     return HomeContent(
         hero=Hero(
@@ -528,22 +661,34 @@ def get_home_content(lang: str = DEFAULT_LANGUAGE) -> HomeContent:
             local_image(hero_folder, hero_name, unsplash(hero_fallback, 2000)),
             local_image(hero_folder, Path(HERO_VIDEO).stem, None, VIDEO_EXTENSIONS) if HERO_VIDEO else None,
             t["scroll_hint"],
+            t["hero_location"],
         ),
         intro=Intro(t["intro_title"], t["intro_paragraphs"], t["quote"]),
         experiences=[
             Experience(unsplash(photo, 500, 500), alt, caption)
             for photo, (alt, caption) in zip(EXPERIENCE_PHOTOS, t["experiences"], strict=True)
         ],
-        how_we_move=HowWeMove(
-            title=t["how_title"],
-            offerings=[
-                Offering(slug, name, description,
-                         local_image("como-nos-movemos", local_name, unsplash(fallback, 1000, 800)))
-                for (slug, local_name, fallback), (name, description)
-                in zip(OFFERINGS, t["offerings"], strict=True)
-            ],
+        how_it_works=HowItWorks(
+            title=t["how_it_works_title"],
+            steps=[Step(i, title, text) for i, (title, text) in enumerate(t["how_it_works"], start=1)],
+            prices=t["how_it_works_prices"].format(**prices),
+            cta=t["how_it_works_cta"],
         ),
-        booking=Booking(t["booking_title"], t["booking_subtitle"].format(capacity=GROUP_SIZE)),
+        work=Work(
+            title=t["work_title"],
+            subtitle=t["work_subtitle"],
+            cta=t["work_cta"],
+            how_we_move=HowWeMove(
+                title=t["how_title"],
+                offerings=[
+                    Offering(slug, name, description,
+                             local_image("como-nos-movemos", local_name, unsplash(fallback, 1000, 800)))
+                    for (slug, local_name, fallback), (name, description)
+                    in zip(OFFERINGS, t["offerings"], strict=True)
+                ],
+            ),
+        ),
+        booking=Booking(t["booking_title"], t["booking_subtitle"]),
         memories=Memories(
             t["memories_title"],
             t["memories_subtitle"],
@@ -555,12 +700,27 @@ def get_home_content(lang: str = DEFAULT_LANGUAGE) -> HomeContent:
         testimonials_title=t["testimonials_title"],
         testimonials_subtitle=t["testimonials_subtitle"],
         membership=Membership(t["member_title"], t["member_text"], t["member_benefits"], t["member_cta"]),
+        about=About(
+            title=t["about_title"],
+            name=OWNER_NAME,
+            roles=t["about_roles"],
+            text=t["about_text"],
+            photo=local_image(*ABOUT_PHOTO, None),
+            initials="".join(part[0] for part in OWNER_NAME.split()[:2]),
+        ),
+        location=Location(
+            title=t["location_title"],
+            subtitle=t["location_subtitle"],
+            map=local_image(*MAP_PHOTO, None),
+            places=[Place(name, t["minutes"].format(n=n)) for name, n in zip(t["places"], PLACE_MINUTES, strict=True)],
+            note=t["location_note"],
+        ),
         testimonials=[
             Testimonial(name, flag, role, quote, unsplash(avatar, 160, 160))
             for (name, flag, avatar), (role, quote) in zip(PEOPLE, t["testimonials"], strict=True)
         ],
         faq_title=t["faq_title"],
-        faq=[FaqItem(question, answer) for question, answer in t["faq"]],
+        faq=[FaqItem(question, [p.format(**prices) for p in answer]) for question, answer in t["faq"]],
         footer=Footer(
             newsletter_title=t["newsletter_title"],
             newsletter_placeholder=t["newsletter_placeholder"],

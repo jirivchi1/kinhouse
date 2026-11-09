@@ -1,0 +1,20 @@
+{# "Dónde estamos": mapa (img/informacion/mapa_web.jpg) y tiempos en coche. Al final de la página. #}
+{% set loc = content.location %}
+<section class="location container" id="location">
+  <h2 class="section-title">{{ loc.title }}</h2>
+  <p class="location__subtitle">{{ loc.subtitle }}</p>
+
+  <div class="location__grid">
+    {% if loc.map %}
+      <img class="location__map" src="{{ loc.map }}" alt="{{ loc.title }}: {{ loc.subtitle }}" loading="lazy" decoding="async">
+    {% endif %}
+    <div class="location__info">
+      <ul class="location__places">
+        {% for place in loc.places %}
+          <li><span>{{ place.name }}</span><strong>{{ place.time }}</strong></li>
+        {% endfor %}
+      </ul>
+      <p class="location__note">{{ loc.note }}</p>
+    </div>
+  </div>
+</section>

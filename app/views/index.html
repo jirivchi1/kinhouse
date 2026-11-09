@@ -1,15 +1,25 @@
 {% extends "base.html" %}
 
+{#
+  Orden por prioridad:
+  1) Planes de fin de semana para gente de Elche y Alicante (intro, cómo funciona, calendario, recuerdos)
+  2) Segunda etapa: unos días para trabajar en tu idea (grupos, también internacionales)
+  3) Hacerse miembro de la familia
+  Y la información básica: quién está detrás, preguntas frecuentes y dónde estamos.
+#}
 {% block body %}
   {% include "partials/_hero.html" %}
   <main>
     {% include "partials/_intro.html" %}
     {% include "partials/_experiences.html" %}
+    {% include "partials/_how_it_works.html" %}
     {% include "partials/_booking.html" %}
     {% include "partials/_memories.html" %}
-    {% include "partials/_how_we_move.html" %}
+    {% include "partials/_work.html" %}
     {% include "partials/_testimonials.html" %}
+    {% include "partials/_about.html" %}
     {% include "partials/_faq.html" %}
+    {% include "partials/_location.html" %}
   </main>
   {% include "partials/_footer.html" %}
   {% include "partials/_join_dialog.html" %}
